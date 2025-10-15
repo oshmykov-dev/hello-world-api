@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>hello-world-api</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>hello-world-api</name>
+    <description>
+        This module contains the generated API interfaces and models for the Hello World service.
+        It serves as a contract between the API specification (hello-world-spec) and the implementation (hello-world-impl).
+        Dependencies are scoped as 'provided' since they'll be provided by the implementation module.
+    </description>
+    <packaging>jar</packaging>
+
+    <properties>
+        <java.version>17</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <openapi-generator.version>7.8.0</openapi-generator.version>
+        <jackson.version>2.15.3</jackson.version>
+        <jakarta.validation.version>3.0.2</jakarta.validation.version>
+        <hello-world-spec.version>1.0.0-SNAPSHOT</hello-world-spec.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/oshmykov-dev/hello-world-spec</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- OpenAPI Specification -->
+        <dependency>
+            <groupId>com.example.helloworld</groupId>
+            <artifactId>hello-world-spec</artifactId>
+            <version>${hello-world-spec.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Jackson Annotations: Defines annotations for JSON processing
+             - Required by the OpenAPI-generated code for:
+               * Mapping Java field names to JSON property names (@JsonProperty)
+               * Customizing JSON serialization/deserialization behavior
+               * Controlling field inclusion in JSON output (@JsonInclude)
+               * Handling polymorphic types (@JsonTypeInfo, @JsonSubTypes)
+             - Key annotations:
+               * @JsonProperty: Maps JSON field names to Java fields
+               * @JsonIgnore: Excludes fields from serialization
+               * @JsonInclude: Controls field inclusion (NON_NULL, NON_EMPTY, etc.)
+               * @JsonFormat: Custom date/number formatting
+             - Used in conjunction with jackson-databind
+             - Compile-time only (no runtime dependencies)
+             - Enables declarative JSON processing configuration -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <!-- Jackson Databind: Core library for JSON processing
+             - Required by the OpenAPI-generated code for:
+               * Serializing API responses to JSON
+               * Deserializing JSON request bodies into Java objects
+               * Processing request/response content in REST controllers
+               * Handling type conversion for all API model classes
+             - Performs Java Object <-> JSON conversion
+             - Implements Jackson's ObjectMapper for JSON processing
+             - Handles complex type resolution and polymorphic types
+             - Features:
+               * Streaming API for high-performance processing
+               * Tree Model (JsonNode) for dynamic JSON handling
+               * Data binding for POJOs
+               * Annotation processing (@JsonView, @JsonIgnoreProperties, etc.)
+             - Thread-safe after configuration (ObjectMapper is thread-safe) -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <!-- Jackson JSR-310: Java 8 Date/Time support for Jackson
+             - Required by the OpenAPI-generated code for:
+               * Serializing/deserializing Java 8 time types (LocalDate, LocalDateTime, etc.)
+               * Handling ISO-8601 date/time formats in API requests/responses
+               * Supporting date/time arithmetic and timezone handling
+             - Key features:
+               * Built-in support for all java.time.* classes
+               * Configurable date/time formats
+               * Timezone handling and normalization
+             - Supported types include:
+               * LocalDate, LocalDateTime, LocalTime
+               * ZonedDateTime, OffsetDateTime
+               * Instant, Duration, Period
+             - Required when using Java 8+ date/time types in your API models
+             - Works with jackson-databind for seamless JSON conversion
+             - Thread-safe implementation
+             - Follows ISO-8601 format by default (e.g., "2025-10-13T17:26:33-04:00") -->
+        <!--
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        -->
+
+        <!-- Jakarta Validation API: Standard validation annotations and interfaces
+             - Provides standard validation annotations (@NotNull, @Size, @Pattern, etc.)
+             - Used by the OpenAPI generator for request/response validation
+             - Marked as 'provided' since the implementation (e.g., Hibernate Validator)
+               will be provided by the runtime environment
+             - Part of Jakarta EE (successor to Java EE) -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>${jakarta.validation.version}</version>
+        </dependency>
+
+        <!-- Jakarta Annotations API: Common annotations for Java applications
+             - Provides standard annotations used across Jakarta EE/Java EE
+             - Key annotations:
+               * @Generated: Marks generated code
+               * @PostConstruct/@PreDestroy: Lifecycle callbacks
+               * @Resource: Resource injection
+             - Used by the OpenAPI generator for @Generated annotations
+             - Lightweight with no runtime dependencies
+             - Part of Jakarta EE (successor to Java EE) -->
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+
+        <!-- Jakarta Servlet API: Core Java web application functionality
+             - Defines the standard for Java web applications
+             - Key features:
+               * Request/response handling
+               * Session management
+               * Filter and servlet interfaces
+             - Used for:
+               * Web container communication
+               * HTTP request/response handling
+               * Web application lifecycle
+             - Marked as 'provided' since the implementation is provided by the servlet container
+               (e.g., Tomcat, Jetty, or Undertow in a Spring Boot application)
+             - Part of Jakarta EE (successor to Java EE) -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>5.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Spring Web: Core web functionality for Spring applications
+             - Provides essential web integration features
+             - Key components:
+               * HTTP client and server support
+               * RESTful web service utilities
+               * HTTP message conversion (JSON/XML)
+               * Web-related context and utilities
+             - Used for:
+               * REST controller support
+               * HTTP request/response handling
+               * Message conversion
+             - Marked as 'provided' since the implementation will be provided by Spring Boot
+             - Part of the Spring Framework's web stack -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>6.0.11</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Compiler Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+
+            <!-- Unpack all YAML files from the JAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>unpack-openapi-specs</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.example.helloworld</groupId>
+                                    <artifactId>hello-world-spec</artifactId>
+                                    <version>${hello-world-spec.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/generated-sources/openapi</outputDirectory>
+                                    <includes>**/*.yaml,**/*.yml</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>groovy-maven-plugin</artifactId>
+                <version>2.1.1</version>
+                <executions>
+                    <execution>
+                        <id>print-numbers</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source><![CDATA[
+                                import java.nio.file.*
+
+                                def apiDir = new File("${project.build.directory}/generated-sources/openapi")
+                                if (!apiDir.exists()) {
+                                    throw new RuntimeException("Directory not found: ${apiDir.absolutePath}")
+                                }
+
+                                def yamlFiles = []
+                                Files.walk(apiDir.toPath()).each { path ->
+                                    def name = path.fileName.toString().toLowerCase()
+                                    if (name.endsWith('.yaml') || name.endsWith('.yml')) {
+                                        yamlFiles << path.toFile()
+                                    }
+                                }
+
+                                if (yamlFiles.isEmpty()) {
+                                    println "No YAML files found in: ${apiDir.absolutePath}"
+                                    return
+                                }
+
+                                println "Found ${yamlFiles.size()} YAML file(s):"
+                                yamlFiles.each { file ->
+                                    def relativePath = apiDir.toPath().relativize(file.toPath())
+                                    println "- Processing: $relativePath"
+
+                                    def cmd = [
+                                        "mvn", "org.openapitools:openapi-generator-maven-plugin:7.8.0:generate",
+                                        "-Dopenapi.generator.maven.plugin.generatorName=spring",
+                                        "-Dopenapi.generator.maven.plugin.apiPackage=${project.groupId}.api",
+                                        "-Dopenapi.generator.maven.plugin.modelPackage=${project.groupId}.model",
+                                        "-Dopenapi.generator.maven.plugin.inputSpec=${file.absolutePath}",
+                                        "-Dopenapi.generator.maven.plugin.output=${project.build.directory}/generated-sources/openapi"
+                                    ]
+
+                                    println "  Executing: ${cmd.join(' ')}"
+
+                                    try {
+                                        def process = cmd.execute(null, project.basedir)
+                                        process.consumeProcessOutput(System.out, System.err)
+                                        process.waitFor()
+
+                                        if (process.exitValue() != 0) {
+                                            throw new RuntimeException("OpenAPI generation failed for: $file.name")
+                                        }
+
+                                        println "  ✓ Successfully processed: $relativePath"
+                                    } catch (Exception e) {
+                                        throw new RuntimeException("Error processing $file.name: ${e.message}", e)
+                                    }
+                                }
+                            ]]></source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
